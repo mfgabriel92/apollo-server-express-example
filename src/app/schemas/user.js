@@ -26,7 +26,7 @@ export default gql`
     last_name: String!
     email: String!
     username: String!
-    messages: [Message!]
+    messages(cursor: String, limit: Int): MessageConnection!
   }
 
   type Token {

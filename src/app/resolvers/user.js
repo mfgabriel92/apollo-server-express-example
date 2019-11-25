@@ -1,5 +1,6 @@
 import jwt from 'jsonwebtoken'
 import { AuthenticationError, UserInputError } from 'apollo-server'
+import Sequelize from 'sequelize'
 
 export default {
   Query: {
@@ -37,11 +38,20 @@ export default {
   },
 
   User: {
-    messages: (user, __, { models }) =>
+    messages: (user, { cursor, limit = 1 }, { models }) =>
       models.Message.findAll({
-        where: {
-          user_id: user.id,
-        },
+        order: [['createdAt', 'DESC']],
+        limit,
+        where: cursor
+          ? {
+              user_id: user.id,
+              createdAt: {
+                [Sequelize.Op.lt]: cursor || null,
+              },
+            }
+          : {
+              user_id: user.id,
+            },
       }),
   },
 }
