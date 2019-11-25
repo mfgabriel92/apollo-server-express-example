@@ -42,9 +42,9 @@ class User extends Model {
     return this
   }
 
-  // static associate(models) {
-  //   this.hasMany(models.Message, { foreignKey: 'user_id', as: 'messages' })
-  // }
+  static associate(models) {
+    this.hasMany(models.Message, { foreignKey: 'user_id' })
+  }
 
   static async findByUsernameOrEmail(login) {
     let user = await this.findOne({ where: { username: login } })

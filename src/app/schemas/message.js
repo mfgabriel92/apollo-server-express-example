@@ -14,6 +14,6 @@ export default gql`
   type Message {
     id: ID!
     content: String!
-    user: User!
+    created_at: Date!
   }
 `

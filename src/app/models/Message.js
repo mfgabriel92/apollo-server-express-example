@@ -18,6 +18,9 @@ class Message extends Model {
             },
           },
         },
+        created_at: {
+          type: Sequelize.DATE,
+        },
       },
       {
         sequelize,
