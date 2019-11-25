@@ -38,10 +38,10 @@ export default {
   },
 
   User: {
-    messages: (user, { cursor, limit = 1 }, { models }) =>
-      models.Message.findAll({
+    messages: async (user, { cursor, limit = 1 }, { models }) => {
+      const messages = await models.Message.findAll({
         order: [['createdAt', 'DESC']],
-        limit,
+        limit: limit + 1,
         where: cursor
           ? {
               user_id: user.id,
@@ -52,6 +52,18 @@ export default {
           : {
               user_id: user.id,
             },
-      }),
+      })
+
+      const hasNextPage = messages.length > limit
+      const edges = hasNextPage ? messages.slice(0, -1) : messages
+
+      return {
+        edges,
+        pageInfo: {
+          hasNextPage,
+          endCursor: messages[messages.length - 1].createdAt,
+        },
+      }
+    },
   },
 }
