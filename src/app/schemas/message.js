@@ -6,6 +6,10 @@ export default gql`
     deleteMessage(id: ID!): Boolean!
   }
 
+  extend type Subscription {
+    messageCreated: Message!
+  }
+
   type Message {
     id: ID!
     content: String!

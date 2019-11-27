@@ -1,3 +1,5 @@
+import http from 'http'
 import app from './app'
 
-app.listen(8000)
+const httpServer = http.createServer(app)
+httpServer.listen(8000)

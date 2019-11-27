@@ -16,10 +16,15 @@ class App {
     return new ApolloServer({
       typeDefs: schemas,
       resolvers,
-      context: async () => ({
-        models,
-        secret: process.env.JWT_SECRET,
-      }),
+      context: async ({ req, connection }) => {
+        if (connection) return models
+        if (req) {
+          return {
+            models,
+            secret: process.env.JWT_SECRET,
+          }
+        }
+      },
     }).applyMiddleware({
       app: this.server,
       path: '/graphql',
