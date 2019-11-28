@@ -7,7 +7,7 @@ export default gql`
   }
 
   extend type Subscription {
-    messageCreated: Message!
+    messageCreated: MessageCreated!
   }
 
   type Message {
@@ -24,5 +24,9 @@ export default gql`
   type PageInfo {
     hasNextPage: Boolean!
     endCursor: Date!
+  }
+
+  type MessageCreated {
+    message: Message!
   }
 `

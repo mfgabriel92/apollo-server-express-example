@@ -6,7 +6,7 @@ export default {
   Query: {
     users: (_, __, { models }) => models.User.findAll(),
     user: (_, { id }, { models }) => models.User.findByPk(id),
-    me: (_, __, { me }) => me,
+    me: (_, __, { me, models }) => models.User.findByPk(me.id),
   },
 
   Mutation: {

@@ -1,6 +1,8 @@
 import 'dotenv/config'
 import express from 'express'
-import { ApolloServer } from 'apollo-server-express'
+import http from 'http'
+import { ApolloServer, AuthenticationError } from 'apollo-server-express'
+import jwt from 'jsonwebtoken'
 import schemas from './app/schemas'
 import resolvers from './app/resolvers'
 import models from './app/models'
@@ -8,12 +10,25 @@ import './database'
 
 class App {
   constructor() {
-    this.server = express()
+    this.express = express()
+    this.server = http.createServer(this.express)
     this.apollo()
   }
 
   apollo() {
-    return new ApolloServer({
+    const me = async req => {
+      const token = req.headers['x-token']
+
+      if (token) {
+        try {
+          return jwt.verify(token, process.env.JWT_SECRET)
+        } catch (e) {
+          throw new AuthenticationError('You are not authorized')
+        }
+      }
+    }
+
+    const server = new ApolloServer({
       typeDefs: schemas,
       resolvers,
       context: async ({ req, connection }) => {
@@ -21,14 +36,21 @@ class App {
         if (req) {
           return {
             models,
+            me: await me(req),
             secret: process.env.JWT_SECRET,
           }
         }
       },
-    }).applyMiddleware({
-      app: this.server,
+    })
+
+    server.applyMiddleware({
+      app: this.express,
       path: '/graphql',
     })
+
+    server.installSubscriptionHandlers(this.server)
+
+    return server
   }
 }
 
