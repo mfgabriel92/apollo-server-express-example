@@ -1,5 +1,5 @@
 import { combineResolvers } from 'graphql-resolvers'
-import { isAuthenticated } from './auth'
+import { isAuthenticated, isOwner } from './auth'
 import pubsub, { EVENTS } from '../subscriptions'
 
 export default {
@@ -19,8 +19,9 @@ export default {
         return message
       }
     ),
-    deleteMessage: (_, { id }, { models }) =>
-      models.Message.destroy({ where: { id } }),
+    deleteMessage: combineResolvers(isOwner, async (_, { id }, { models }) =>
+      models.Message.destroy({ where: { id } })
+    ),
   },
 
   Subscription: {

@@ -1,6 +1,8 @@
 import jwt from 'jsonwebtoken'
 import { AuthenticationError, UserInputError } from 'apollo-server'
 import Sequelize from 'sequelize'
+import { combineResolvers } from 'graphql-resolvers'
+import { isAdmin } from './auth'
 
 export default {
   Query: {
@@ -31,10 +33,16 @@ export default {
         throw new AuthenticationError('Login or password do not match')
       }
 
+      const { id, username, role } = user
+
       return {
-        token: jwt.sign({ id: user.id }, secret),
+        token: jwt.sign({ id, username, role }, secret),
       }
     },
+
+    deleteUser: combineResolvers(isAdmin, (_, { id }, { models }) =>
+      models.User.destroy({ where: { id } })
+    ),
   },
 
   User: {
@@ -64,6 +72,9 @@ export default {
           endCursor: messages[messages.length - 1].createdAt,
         },
       }
+    },
+    __resolveReference(user, { fetchUserById }) {
+      return fetchUserById(user.id)
     },
   },
 }

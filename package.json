@@ -3,23 +3,32 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon --exec babel-node src/server.js"
+    "start": "nodemon --exec babel-node src/server.js",
+    "pretest": "NODE_ENV=testing; yarn sequelize db:migrate && yarn sequelize db:seed:all",
+    "test": "mocha --require @babel/register 'src/tests/**/*.spec.js'",
+    "posttest": "NODE_ENV=testing; yarn sequelize db:migrate:undo:all"
   },
   "license": "MIT",
   "devDependencies": {
     "@babel/core": "^7.7.4",
     "@babel/node": "^7.7.4",
     "@babel/preset-env": "^7.7.4",
+    "@types/chai": "^4.2.5",
+    "@types/mocha": "^5.2.7",
+    "axios": "^0.19.0",
+    "chai": "^4.2.0",
     "eslint": "^6.7.0",
     "eslint-config-airbnb-base": "^14.0.0",
     "eslint-config-prettier": "^6.7.0",
     "eslint-plugin-import": "^2.18.2",
     "eslint-plugin-prettier": "^3.1.1",
     "faker": "^4.1.0",
+    "mocha": "^6.2.2",
     "nodemon": "^2.0.1",
     "prettier": "^1.19.1"
   },
   "dependencies": {
+    "@apollo/federation": "^0.11.2",
     "apollo-server": "^2.9.12",
     "apollo-server-express": "^2.9.12",
     "bcryptjs": "^2.4.3",

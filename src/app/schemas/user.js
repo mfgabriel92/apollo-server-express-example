@@ -17,6 +17,7 @@ export default gql`
       password: String!
     ): Token!
     signIn(login: String!, password: String!): Token!
+    deleteUser(id: ID!): Boolean!
   }
 
   type User {
@@ -25,6 +26,7 @@ export default gql`
     middle_name: String!
     last_name: String!
     email: String!
+    role: String!
     username: String!
     messages(cursor: String, limit: Int): MessageConnection!
   }
